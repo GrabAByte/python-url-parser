@@ -1,0 +1,54 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  get-version:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/getVersion.yml@0.4.0
+    with:
+      metadataFile: 'main.yml'
+      metadataPath: 'meta'
+  python-lint:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonLint.yml@feat/python
+    with:
+      appPath: .
+    needs: get-version
+  python-test:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonTest.yml@feat/python
+    needs: get-version
+  python-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonScan.yml@feat/python
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  sonar-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/sonarScan.yml@0.4.0
+    secrets:
+      WORKFLOW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    needs: get-version
+  python-release:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonRelease.yml@feat/python
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+    needs: update-version
+  docker-lint:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerLint.yml@0.3.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    needs: python-release
+  docker-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.3.0
+  docker-build-publish:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.3.0
+  update-version:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/updateVersion.yml@0.4.0
+    with:
+      gitUsername: 'grababyte'
+      gitEmail: 'grababyte@github.com'
+      metadataFile: 'main.yml'
+      metadataPath: 'meta'
+    needs: [python-lint, python-test, python-scan, sonar-scan, python-release, docker-lint, docker-build-publish, docker-scan]
