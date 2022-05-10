@@ -67,4 +67,4 @@ jobs:
       gitEmail: 'grababyte@github.com'
       metadataFile: 'main.yml'
       metadataPath: 'meta'
-    needs: [python-lint, python-test, python-scan, sonar-scan, python-release, docker-lint, docker-scan, docker-build-publish]
+    needs: [docker-build-publish]
