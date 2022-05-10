@@ -37,7 +37,7 @@ jobs:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonRelease.yml@feat/python
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-    needs: update-version
+    needs: [python-lint, python-test, python-scan, sonar-scan]
   docker-lint:
     uses: GrabAByte/github-devops-workflows/.github/workflows/dockerLint.yml@0.4.0
     with:
