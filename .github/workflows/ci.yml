@@ -19,6 +19,8 @@ jobs:
     needs: get-version
   python-test:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonTest.yml@feat/python
+    with:
+      testPath: 'tests'
     needs: get-version
   python-scan:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonScan.yml@feat/python
@@ -44,11 +46,18 @@ jobs:
     uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.4.0
     with:
       dockerfilePath: 'docker/Dockerfile'
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     needs: python-release
   docker-build-publish:
     uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.4.0
     with:
       dockerfilePath: 'docker/Dockerfile'
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     needs: [docker-lint, docker-scan]
   update-version:
     uses: GrabAByte/github-devops-workflows/.github/workflows/updateVersion.yml@0.4.0
