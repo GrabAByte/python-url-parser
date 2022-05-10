@@ -15,7 +15,7 @@ jobs:
   python-lint:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonLint.yml@feat/python
     with:
-      appPath: .
+      appPath: 'simple-app'
     needs: get-version
   python-test:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonTest.yml@feat/python
