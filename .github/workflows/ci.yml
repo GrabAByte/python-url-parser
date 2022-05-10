@@ -36,14 +36,20 @@ jobs:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
     needs: update-version
   docker-lint:
-    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerLint.yml@0.3.0
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerLint.yml@0.4.0
     with:
       dockerfilePath: 'docker/Dockerfile'
     needs: python-release
   docker-scan:
-    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.3.0
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.4.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    needs: python-release
   docker-build-publish:
-    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.3.0
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.4.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    needs: [docker-lint, docker-scan]
   update-version:
     uses: GrabAByte/github-devops-workflows/.github/workflows/updateVersion.yml@0.4.0
     with:
@@ -51,4 +57,4 @@ jobs:
       gitEmail: 'grababyte@github.com'
       metadataFile: 'main.yml'
       metadataPath: 'meta'
-    needs: [python-lint, python-test, python-scan, sonar-scan, python-release, docker-lint, docker-build-publish, docker-scan]
+    needs: [python-lint, python-test, python-scan, sonar-scan, python-release, docker-lint, docker-scan, docker-build-publish]
