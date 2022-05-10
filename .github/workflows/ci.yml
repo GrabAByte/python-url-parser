@@ -26,6 +26,7 @@ jobs:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonScan.yml@feat/python
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    needs: get-version
   sonar-scan:
     uses: GrabAByte/github-devops-workflows/.github/workflows/sonarScan.yml@0.4.0
     secrets:
