@@ -53,7 +53,7 @@ jobs:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     needs: python-release
   docker-build-publish:
-    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildPublish.yml@0.5.0
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildPublish.yml@fix/addLatestTag
     with:
       dockerfilePath: 'docker/Dockerfile'
     secrets:
