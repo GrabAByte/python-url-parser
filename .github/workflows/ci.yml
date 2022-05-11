@@ -8,7 +8,7 @@ name: CI
 
 jobs:
   get-version:
-    uses: GrabAByte/github-devops-workflows/.github/workflows/getVersion.yml@0.4.0
+    uses: GrabAByte/github-devops-workflows/.github/workflows/getVersion.yml@feat/python
     with:
       metadataFile: 'setup.py'
       metadataPath: '.'
