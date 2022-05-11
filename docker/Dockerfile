@@ -1,4 +1,4 @@
-FROM grababyte/alpine-base:0.7.1
+FROM grababyte/alpine-python3:0.0.2
 
 COPY simple-app /var/workspace
 
