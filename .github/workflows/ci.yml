@@ -15,7 +15,7 @@ jobs:
   python-lint:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonLint.yml@0.5.1
     with:
-      appPath: 'simple-app'
+      appPath: 'url-parser'
     needs: get-version
   python-test:
     uses: GrabAByte/github-devops-workflows/.github/workflows/pythonTest.yml@0.5.1

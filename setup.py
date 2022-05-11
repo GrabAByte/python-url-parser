@@ -9,12 +9,12 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="python-simple-app",
+    name="python-url-parser",
     version="0.1.1",
     description="A forked repository for testing Python CI and Release",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/GrabAByte/python-simple-app",
+    url="https://github.com/GrabAByte/python-url-parser",
     author="GrabAByte",
     author_email="grababyte@github.com",
     license="MIT",
@@ -23,7 +23,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages=["simple-app"],
+    packages=["url-parser"],
     include_package_data=True,
     install_requires=["feedparser", "html2text"],
     entry_points={
