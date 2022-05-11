@@ -1,0 +1,70 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  get-version:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/getVersion.yml@feat/python
+    with:
+      metadataFile: 'setup.py'
+      metadataPath: '.'
+  python-lint:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonLint.yml@feat/python
+    with:
+      appPath: 'simple-app'
+    needs: get-version
+  python-test:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonTest.yml@feat/python
+    with:
+      testPath: 'tests'
+    needs: get-version
+  python-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonScan.yml@feat/python
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    needs: get-version
+  sonar-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/sonarScan.yml@0.4.0
+    secrets:
+      WORKFLOW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    needs: get-version
+  python-release:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/pythonRelease.yml@feat/python
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+    needs: [python-lint, python-test, python-scan, sonar-scan]
+  docker-lint:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerLint.yml@0.4.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    needs: python-release
+  docker-scan:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildScan.yml@0.4.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    needs: python-release
+  docker-build-publish:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/dockerBuildPublish.yml@0.4.0
+    with:
+      dockerfilePath: 'docker/Dockerfile'
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    needs: [docker-lint, docker-scan]
+  update-version:
+    uses: GrabAByte/github-devops-workflows/.github/workflows/updateVersion.yml@0.4.0
+    with:
+      gitUsername: 'grababyte'
+      gitEmail: 'grababyte@github.com'
+      metadataFile: 'setup.py'
+      metadataPath: '.'
+    needs: [docker-build-publish]
